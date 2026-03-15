@@ -1,30 +1,42 @@
-name: Hello World
+name: AWS Resource Check
 
 on:
   push:
   workflow_dispatch:
 
 jobs:
-  Hello-World-Job:
+
+  hello-world:
     runs-on:
       - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
-
     steps:
       - name: Print Hello World
         run: echo "Hello World"
 
+  list-rds:
+    runs-on:
+      - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
       - name: List RDS Instances
         run: |
           aws rds describe-db-instances \
           --query "DBInstances[*].DBInstanceIdentifier" \
           --output table
 
+  list-ec2:
+    runs-on:
+      - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
       - name: List EC2 Instances
         run: |
           aws ec2 describe-instances \
           --query "Reservations[*].Instances[*].[InstanceId,State.Name,PublicIpAddress]" \
           --output table
 
+  list-s3:
+    runs-on:
+      - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
       - name: List S3 Buckets
         run: |
           aws s3 ls
