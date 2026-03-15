@@ -1,8 +1,30 @@
 name: Hello World
-on: [push]
+
+on:
+  push:
+  workflow_dispatch:
+
 jobs:
   Hello-World-Job:
     runs-on:
       - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
+
     steps:
-      - run: echo "Hello World"
+      - name: Print Hello World
+        run: echo "Hello World"
+
+      - name: List RDS Instances
+        run: |
+          aws rds describe-db-instances \
+          --query "DBInstances[*].DBInstanceIdentifier" \
+          --output table
+
+      - name: List EC2 Instances
+        run: |
+          aws ec2 describe-instances \
+          --query "Reservations[*].Instances[*].[InstanceId,State.Name,PublicIpAddress]" \
+          --output table
+
+      - name: List S3 Buckets
+        run: |
+          aws s3 ls
