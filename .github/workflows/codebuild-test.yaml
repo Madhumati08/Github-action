@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Step 1 - Hello World
-        continue-on-error: true
+        continue-on-error: false
         run: |
           echo "Hello World"
 
