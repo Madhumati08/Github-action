@@ -1,42 +1,35 @@
 name: AWS Resource Check
 
 on:
-  push:
+  # push:
   workflow_dispatch:
 
 jobs:
-
-  hello-world:
+  aws-check:
     runs-on:
       - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
-    steps:
-      - name: Print Hello World
-        run: echo "Hello World"
 
-  list-rds:
-    runs-on:
-      - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
-      - name: List RDS Instances
+      - name: Step 1 - Hello World
+        continue-on-error: true
+        run: |
+          echo "Hello World"
+
+      - name: Step 2 - List RDS Instances
+        continue-on-error: true
         run: |
           aws rds describe-db-instances \
           --query "DBInstances[*].DBInstanceIdentifier" \
           --output table
 
-  list-ec2:
-    runs-on:
-      - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
-    steps:
-      - name: List EC2 Instances
+      - name: Step 3 - List EC2 Instances
+        continue-on-error: true
         run: |
           aws ec2 describe-instances \
           --query "Reservations[*].Instances[*].[InstanceId,State.Name,PublicIpAddress]" \
           --output table
 
-  list-s3:
-    runs-on:
-      - codebuild-test-${{ github.run_id }}-${{ github.run_attempt }}
-    steps:
-      - name: List S3 Buckets
+      - name: Step 4 - List S3 Buckets
+        continue-on-error: true
         run: |
           aws s3 ls
